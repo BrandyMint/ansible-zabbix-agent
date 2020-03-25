@@ -1,5 +1,5 @@
 {{ ansible_managed | comment }}
-# this is a config file for zabbix agent
+# this is a config file for zabbix agent2
 # to get more information about zabbix, visit http://www.zabbix.com
 
 ############ general parameters #################
@@ -45,20 +45,6 @@ DebugLevel={{ zabbix_agent_debuglevel }}
 SourceIP={{ zabbix_agent_sourceip }}
 {% endif %}
 
-### option: enableremotecommands
-#       whether remote commands from zabbix server are allowed.
-#       0 - not allowed
-#       1 - allowed
-#
-EnableRemoteCommands={{ zabbix_agent_enableremotecommands }}
-
-### option: logremotecommands
-#       enable logging of executed shell commands as warnings.
-#       0 - disabled
-#       1 - enabled
-#
-LogRemoteCommands={{ zabbix_agent_logremotecommands }}
-
 ##### passive checks related
 
 ### option: server
@@ -85,12 +71,6 @@ ListenPort={{ zabbix_agent_listenport }}
 {% if zabbix_agent_listenip is defined and zabbix_agent_listenip !='0.0.0.0' and zabbix_agent_listenip %}
 ListenIP={{ zabbix_agent_listenip }}
 {% endif %}
-
-### option: startagents
-#       number of pre-forked instances of zabbix_agentd that process passive checks.
-#       if set to 0, disables passive checks and the agent will not listen on any tcp port.
-#
-StartAgents={{ zabbix_agent_startagents }}
 
 ##### active checks related
 ### option: serveractive
@@ -157,14 +137,6 @@ BufferSend={{ zabbix_agent_buffersend }}
 #
 BufferSize={{ zabbix_agent_buffersize }}
 
-### option: maxlinespersecond
-#       maximum number of new lines the agent will send per second to zabbix server
-#       or proxy processing 'log' and 'logrt' active checks.
-#       the provided value will be overridden by the parameter 'maxlines',
-#       provided in 'log' or 'logrt' item keys.
-#
-MaxLinesPerSecond={{ zabbix_agent_maxlinespersecond }}
-
 ############ advanced parameters #################
 
 ### option: alias
@@ -178,23 +150,6 @@ Alias={{ zabbix_agent_zabbix_alias }}
 #       spend no more than timeout seconds on processing
 #
 Timeout={{ zabbix_agent_timeout }}
-
-{% if zabbix_agent_os_family != "Windows" %}
-### option: allowroot
-#       allow the agent to run as 'root'. if disabled and the agent is started by 'root', the agent
-#       will try to switch to user 'zabbix' instead. has no effect if started under a regular user.
-#       0 - do not allow
-#       1 - allow
-#
-AllowRoot={{ zabbix_agent_allowroot }}
-{% endif %}
-
-### Option: User
-#	Drop privileges to a specific, existing user on the system.
-#	Only has effect if run as 'root' and AllowRoot is disabled.
-#
-# Mandatory: no
-# Default:
 
 {% if zabbix_agent_runas_user is defined and zabbix_agent_runas_user %}
 User={{ zabbix_agent_runas_user }}
@@ -230,137 +185,3 @@ UnsafeUserParameters={{ zabbix_agent_unsafeuserparameters }}
 # userparameter=
 
 # disabled. an configuration file should be placed on directory: {{ zabbix_agent_include }}
-
-####### LOADABLE MODULES #######
-{% if zabbix_version is version_compare('2.2', '>=') %}
-### Option: LoadModulePath
-#       Full path to location of agent modules.
-#       Default depends on compilation options.
-#
-{% if zabbix_agent_os_family != "Windows" %}
-LoadModulePath={{ zabbix_agent_loadmodulepath }}
-{% endif %}
-{% endif %}
-
-### Option: LoadModule
-#       Module to load at agent startup. Modules are used to extend functionality of the agent.
-#       Format: LoadModule=<module.so>
-#       The modules must be located in directory specified by LoadModulePath.
-#       It is allowed to include multiple LoadModule parameters.
-#
-{% if zabbix_agent_loadmodule is defined and zabbix_agent_loadmodule %}
-LoadModule={{ zabbix_agent_loadmodule }}
-{% endif %}
-
-{% if zabbix_version is version_compare('3.0', '>=') %}
-####### TLS-RELATED PARAMETERS #######
-
-### Option: TLSConnect
-#       How the agent should connect to server or proxy. Used for active checks.
-#       Only one value can be specified:
-#               unencrypted - connect without encryption
-#               psk         - connect using TLS and a pre-shared key
-#               cert        - connect using TLS and a certificate
-#
-# Mandatory: yes, if TLS certificate or PSK parameters are defined (even for 'unencrypted' connection)
-# Default:
-# TLSConnect=unencrypted
-{% if zabbix_agent_tlsconnect is defined and zabbix_agent_tlsconnect %}
-TLSConnect={{ zabbix_agent_tlsconnect }}
-{% endif %}
-
-### Option: TLSAccept
-#       What incoming connections to accept.
-#       Multiple values can be specified, separated by comma:
-#               unencrypted - accept connections without encryption
-#               psk         - accept connections secured with TLS and a pre-shared key
-#               cert        - accept connections secured with TLS and a certificate
-#
-# Mandatory: yes, if TLS certificate or PSK parameters are defined (even for 'unencrypted' connection)
-# Default:
-# TLSAccept=unencrypted
-{% if zabbix_agent_tlsaccept is defined and zabbix_agent_tlsaccept %}
-TLSAccept={{ zabbix_agent_tlsaccept }}
-{% endif %}
-
-### Option: TLSCAFile
-#       Full pathname of a file containing the top-level CA(s) certificates for
-#       peer certificate verification.
-#
-# Mandatory: no
-# Default:
-# TLSCAFile=
-{% if zabbix_agent_tlscafile is defined and zabbix_agent_tlscafile %}
-TLSCAFile={{ zabbix_agent_tlscafile }}
-{% endif %}
-
-### Option: TLSCRLFile
-#       Full pathname of a file containing revoked certificates.
-#
-# Mandatory: no
-# Default:
-# TLSCRLFile=
-{% if zabbix_agent_tlscrlfile is defined and zabbix_agent_tlscrlfile %}
-TLSCRLFile={{ zabbix_agent_tlscrlfile }}
-{% endif %}
-
-### Option: TLSServerCertIssuer
-#      Allowed server certificate issuer.
-#
-# Mandatory: no
-# Default:
-# TLSServerCertIssuer=
-{% if zabbix_agent_tlsservercertissuer is defined and zabbix_agent_tlsservercertissuer %}
-TLSServerCertIssuer={{ zabbix_agent_tlsservercertissuer }}
-{% endif %}
-
-### Option: TLSServerCertSubject
-#      Allowed server certificate subject.
-#
-# Mandatory: no
-# Default:
-# TLSServerCertSubject=
-{% if zabbix_agent_tlsservercertsubject is defined and zabbix_agent_tlsservercertsubject %}
-TLSServerCertSubject={{ zabbix_agent_tlsservercertsubject }}
-{% endif %}
-
-### Option: TLSCertFile
-#       Full pathname of a file containing the agent certificate or certificate chain.
-#
-# Mandatory: no
-# Default:
-# TLSCertFile=
-{% if zabbix_agent_tlscertfile is defined and zabbix_agent_tlscertfile %}
-TLSCertFile={{ zabbix_agent_tlscertfile }}
-{% endif %}
-
-### Option: TLSKeyFile
-#       Full pathname of a file containing the agent private key.
-#
-# Mandatory: no
-# Default:
-# TLSKeyFile=
-{% if zabbix_agent_tlskeyfile is defined and zabbix_agent_tlskeyfile %}
-TLSKeyFile={{ zabbix_agent_tlskeyfile }}
-{% endif %}
-
-### Option: TLSPSKIdentity
-#       Unique, case sensitive string used to identify the pre-shared key.
-#
-# Mandatory: no
-# Default:
-# TLSPSKIdentity=
-{% if zabbix_agent_tlspskidentity is defined and zabbix_agent_tlspskidentity %}
-TLSPSKIdentity={{ zabbix_agent_tlspskidentity }}
-{% endif %}
-
-### Option: TLSPSKFile
-#       Full pathname of a file containing the pre-shared key.
-#
-# Mandatory: no
-# Default:
-# TLSPSKFile=
-{% if zabbix_agent_tlspskfile is defined and zabbix_agent_tlspskfile %}
-TLSPSKFile={{ zabbix_agent_tlspskfile }}
-{% endif %}
-{% endif %}
